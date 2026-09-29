@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>If You Never Reach Mt. Stupid: An Emotional-Logic Proof that P ≠ NP for Humans</title>
+<meta name="description" content="A peer-reviewed-by-campfire proof that the effort to do a thing is very much not the same as the effort to check it. Features a helicopter, a borrow checker, and a folk-metal camping song.">
+<meta property="og:title" content="If You Never Reach Mt. Stupid: An Emotional-Logic Proof that P ≠ NP for Humans">
+<meta property="og:description" content="Human-P ⊊ Human-NP. Proved with one song, four axioms, a helicopter, and rustc.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#f4f5ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141a22" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛰️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>
+  /* ============================================================
+     ✏️  EDIT THESE TWO LINES, then push to GitHub Pages.
+     AUTHOR   : your name or handle (shows in the byline, refs, BibTeX)
+     SONG_URL : your Suno link. Leave "" to hide the listen links.
+     ============================================================ */
+  window.PAPER_CONFIG = {
+    AUTHOR: "A. Hiker",
+    SONG_URL: ""
+  };
+  try {
+    var t = localStorage.getItem("mt-stupid-theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+</script>
+<style>
+  :root {
+    --paper: #f4f5ef;
+    --card: #e9ebe2;
+    --ink: #1b201d;
+    --soft: #4d5650;
+    --rule: #cfd4c8;
+    --contour: #8a4a1f;
+    --blaze: #1b56a0;
+    --moss: #2b6636;
+    --flare: #a8261c;
+    --code-bg: #1d232b;
+    --code-fg: #e3e6df;
+    --serif: "STIX Two Text", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --hand: "Kalam", "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --measure: 34em;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #141a22; --card: #1b232e; --ink: #e3e6df; --soft: #a3aba5; --rule: #2c3643;
+      --contour: #d49a68; --blaze: #8ab8f0; --moss: #8acb98; --flare: #f0928a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #141a22; --card: #1b232e; --ink: #e3e6df; --soft: #a3aba5; --rule: #2c3643;
+    --contour: #d49a68; --blaze: #8ab8f0; --moss: #8acb98; --flare: #f0928a;
+    color-scheme: dark;
+  }
+
+  :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 1.5rem); -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: clamp(1.0625rem, 0.96rem + 0.42vw, 1.25rem);
+    line-height: 1.62;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: color-mix(in srgb, var(--blaze) 28%, transparent); }
+  a { color: var(--blaze); text-decoration-thickness: 0.06em; text-underline-offset: 0.18em; }
+  a:hover { text-decoration-thickness: 0.12em; }
+  :focus-visible { outline: 2.5px solid var(--blaze); outline-offset: 3px; border-radius: 2px; }
+
+  .page { max-width: 64rem; margin: 0 auto; padding: 2.5rem 1.25rem 7rem; }
+  .col { max-width: var(--measure); margin: 0 auto; }
+  @media (min-width: 72rem) { .col { margin-left: max(1.5rem, calc(50% - 24em)); } }
+
+  /* running head */
+  .running-head { display: flex; justify-content: space-between; gap: 1rem 2rem; flex-wrap: wrap; font-style: italic; font-size: 0.8em; color: var(--soft); border-bottom: 1px solid var(--rule); padding-bottom: 0.5rem; margin-bottom: 3rem; }
+  .running-head p { margin: 0; }
+
+  /* title block */
+  .title-block { text-align: center; margin-bottom: 2.5rem; }
+  h1 { font-size: clamp(2rem, 1.3rem + 3vw, 3.1rem); line-height: 1.08; font-weight: 700; margin: 0 0 0.6rem; letter-spacing: -0.012em; text-wrap: balance; font-variant-numeric: lining-nums; }
+  .subtitle { font-size: 1.28em; font-style: italic; margin: 0 0 1.6rem; text-wrap: balance; }
+  .authors { font-size: 1.08em; margin: 0 0 0.25rem; }
+  .affil { font-size: 0.84em; color: var(--soft); margin: 0; line-height: 1.45; }
+  .status { margin: 1.3rem auto 0; font-size: 0.86em; max-width: 30em; line-height: 1.5; }
+  .status .accept { color: var(--moss); font-weight: 600; }
+  .tools { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 1.4rem; }
+  .btn { font: inherit; font-size: 0.8em; color: var(--ink); background: transparent; border: 1.5px solid var(--ink); padding: 0.32em 0.9em 0.36em; cursor: pointer; border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px; }
+  .btn:hover { background: var(--card); }
+
+  /* abstract */
+  .abstract { font-size: 0.93em; margin: 0 auto 2.5rem; max-width: 30em; }
+  .abstract h2 { font-size: 1em; text-align: center; margin: 0 0 0.4rem; }
+  .abstract p { margin: 0; hyphens: auto; }
+  .keywords { font-size: 0.86em; margin-top: 0.8rem !important; color: var(--soft); }
+
+  /* body text */
+  .body p, .body li { hyphens: auto; }
+  h2.sec { font-size: 1.3em; line-height: 1.25; margin: 2.8rem 0 0.8rem; font-weight: 700; font-variant-numeric: lining-nums; }
+  h2.sec .n { display: inline-block; min-width: 1.6em; }
+  h3.sub { font-size: 1.05em; margin: 1.8rem 0 0.5rem; }
+  .contrib { padding-left: 1.3em; }
+  .contrib li { margin-bottom: 0.25rem; }
+  .cite { white-space: nowrap; }
+  .math { font-style: italic; white-space: nowrap; }
+  .math .up { font-style: normal; }
+  q { quotes: "\201C" "\201D" "\2018" "\2019"; }
+
+  /* theorem-like environments */
+  .env { margin: 1.3rem 0; padding: 0.15rem 0 0.15rem 1rem; border-left: 3px solid var(--rule); }
+  .env.thm { border-left-color: var(--contour); }
+  .env > p { margin: 0.4rem 0; }
+  .env .head { font-weight: 700; font-style: normal; }
+  .env .name { font-weight: 400; font-style: normal; }
+  .env.thm .stmt, .env.lemma .stmt, .env.prop .stmt, .env.conj .stmt, .env.cor .stmt { font-style: italic; }
+  .proof { margin: 0.8rem 0 1.4rem; }
+  .proof .head { font-style: italic; }
+  .qed { float: right; margin-left: 0.6em; }
+  .proof::after { content: ""; display: block; clear: both; }
+  .steps { padding-left: 1.6em; margin: 0.6rem 0; }
+  .steps li { margin-bottom: 0.45rem; padding-left: 0.2em; }
+  .qed-line { text-align: center; font-size: 1.12em; margin: 1.6rem 0 0.4rem; }
+  .qed-line small { display: block; font-style: italic; color: var(--soft); font-size: 0.8em; }
+
+  /* sidenotes: margin on wide screens, inline note on narrow ones */
+  .sn-ref { font-size: 0.72em; vertical-align: super; line-height: 0; color: var(--blaze); font-variant-numeric: lining-nums; }
+  .sidenote { display: block; font-size: 0.8em; line-height: 1.45; color: var(--soft); margin: 0.6rem 0 0.6rem 1.2rem; text-align: left; }
+  .sidenote .sn-num { color: var(--blaze); font-variant-numeric: lining-nums; }
+  @media (min-width: 72rem) {
+    .sidenote { float: right; clear: right; width: 15rem; margin: 0.2rem -17.5rem 1rem 0; }
+  }
+
+  /* figures */
+  figure { margin: 2.2rem 0; }
+  .fig-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .fig1 { display: block; width: 100%; min-width: 34rem; height: auto; }
+  figcaption { font-size: 0.86em; line-height: 1.5; margin-top: 0.6rem; }
+  figcaption b { font-weight: 700; }
+  .fig1 .axis { fill: none; stroke: var(--soft); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .fig1 .axis-soft { fill: none; stroke: var(--soft); stroke-width: 1.4; stroke-linecap: round; opacity: 0.7; }
+  .fig1 .faint { opacity: 0.45; stroke-width: 1.1; }
+  .fig1 .trail { fill: none; stroke: var(--contour); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .fig1 .trail.faint { stroke-width: 1.4; opacity: 0.55; }
+  .fig1 .flight { fill: none; stroke: var(--blaze); stroke-width: 2.4; stroke-dasharray: 0.5 8; stroke-linecap: round; }
+  .fig1 .doodle { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .fig1 .doodle .thin { stroke-width: 1.5; }
+  .fig1 .fill-paper { fill: var(--paper); }
+  .fig1 .fill-blaze { fill: var(--blaze); }
+  .fig1 .hand { font-family: var(--hand); font-size: 23px; fill: var(--ink); stroke: none; }
+  .fig1 .hand.big { font-size: 29px; font-weight: 700; }
+  .fig1 .hand.small { font-size: 19px; }
+  .fig1 .hand.soft { fill: var(--soft); }
+  .fig1 .hand.axis-label { font-size: 20px; fill: var(--soft); }
+
+  @media (min-width: 72rem) {
+    #fig1 { margin-right: -12rem; }
+    .proof pre { margin-right: -5rem; }
+  }
+
+  /* figure 2: the gallery trajectory */
+  .legend { font-family: var(--hand); font-size: 0.92em; color: var(--soft); margin: 0 0 1rem; line-height: 1.4; }
+  .states { list-style: none; margin: 0; padding: 0; max-width: 30em; }
+  .state { position: relative; background: var(--paper); border: 2px solid var(--ink); padding: 0.75rem 1rem 0.8rem 3.4rem; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; }
+  .states > .state:nth-child(4n+3) { border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px; }
+  .state .sid { position: absolute; left: 0.9rem; top: 0.8rem; font-family: var(--hand); font-weight: 700; color: var(--contour); font-size: 1.05em; }
+  .state .said { margin: 0; font-size: 1.05em; }
+  .state .did { margin: 0; font-style: italic; }
+  .state .note { margin: 0.35rem 0 0; font-family: var(--hand); font-size: 0.88em; color: var(--soft); line-height: 1.35; }
+  .meter { position: relative; height: 0.5rem; margin-top: 0.55rem; background: var(--card); border-radius: 99px; }
+  .meter::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--soft); }
+  .meter .fill { position: absolute; top: 0; bottom: 0; border-radius: 99px; }
+  .meter .fill.pos { background: var(--moss); }
+  .meter .fill.neg { background: var(--flare); }
+  .meter .dot { position: absolute; left: 50%; top: 50%; width: 0.7rem; height: 0.7rem; margin: -0.35rem 0 0 -0.35rem; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); }
+  .state.absorbing { border-color: var(--flare); border-width: 2.5px; }
+  .loop { position: absolute; right: -0.4rem; top: -0.9rem; font-family: var(--hand); font-size: 0.8em; color: var(--flare); background: var(--paper); padding: 0 0.35rem; line-height: 1.3; }
+  .state.escaped { border-color: var(--moss); border-width: 2.5px; }
+  .conn { display: flex; align-items: center; gap: 0.7rem; min-height: 2.6rem; padding-left: 2.2rem; }
+  .conn::before {
+    content: ""; flex: none; width: 18px; height: 34px; background: var(--soft);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 34'%3E%3Cpath d='M9 1 C8 10 10 18 9 30 M3 23 L9 31 L15 22' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 34'%3E%3Cpath d='M9 1 C8 10 10 18 9 30 M3 23 L9 31 L15 22' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  .conn span { font-family: var(--hand); font-size: 0.88em; color: var(--moss); line-height: 1.3; padding: 0.4rem 0; }
+  .conn.exit::before { background: var(--moss); }
+
+  /* code */
+  pre { font-family: var(--mono); font-size: 0.74em; line-height: 1.55; background: var(--code-bg); color: var(--code-fg); padding: 1rem 1.1rem; overflow-x: auto; border-radius: 6px; margin: 1rem 0; tab-size: 4; font-variant-numeric: normal; font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  pre .file { display: block; color: #94a0ab; margin-bottom: 0.5rem; font-size: 0.92em; }
+  .k { color: #f2a66e; } .ty { color: #8fc7ff; } .c { color: #94a0ab; font-style: italic; } .f { color: #b9e08c; } .m { color: #e7b8ff; } .e { color: #ff9a8f; font-weight: 600; }
+
+  code, kbd { font-family: var(--mono); font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; font-size: 0.8em; background: var(--card); padding: 0.08em 0.35em; border-radius: 4px; font-variant-numeric: normal; }
+  kbd { border: 1px solid var(--rule); border-bottom-width: 2px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  /* reviews, refs, appendix */
+  .review { margin: 1rem 0; padding: 0.1rem 0 0.1rem 1rem; border-left: 3px solid var(--rule); }
+  .review p { margin: 0.3rem 0; }
+  .verdict { font-weight: 700; }
+  .verdict.acc { color: var(--moss); } .verdict.rej { color: var(--flare); }
+  .editor { font-style: italic; color: var(--soft); font-size: 0.92em; }
+  .refs { padding-left: 0; list-style: none; font-size: 0.88em; line-height: 1.5; }
+  .refs li { display: grid; grid-template-columns: 2.4em 1fr; margin-bottom: 0.55rem; }
+  .refs li:target { background: color-mix(in srgb, var(--blaze) 12%, transparent); }
+  details.lyrics { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 0.6rem 0; }
+  details.lyrics summary { cursor: pointer; font-weight: 600; }
+  .lyr { columns: 2 16em; column-gap: 2.5em; font-size: 0.92em; line-height: 1.5; margin-top: 1rem; }
+  .lyr section { break-inside: avoid; margin-bottom: 1rem; }
+  .lyr h4 { margin: 0 0 0.15rem; font-size: 0.86em; color: var(--contour); font-weight: 600; }
+  .lyr p { margin: 0; text-align: left !important; hyphens: manual !important; }
+  .lyr section:target h4 { color: var(--blaze); }
+  .listen[hidden] { display: none; }
+  .bib { position: relative; }
+  .bib .btn { position: absolute; right: 0.6rem; top: 0.6rem; color: var(--code-fg); border-color: #94a0ab; font-family: var(--serif); }
+  .bib .btn:hover { background: #2a323d; }
+  .colophon { font-size: 0.8em; color: var(--soft); text-align: center; margin-top: 3.5rem; }
+
+  /* vim statusline */
+  .statusline { position: fixed; left: 0; right: 0; bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 13px; line-height: 1; z-index: 10; }
+  .statusline .row { display: flex; align-items: stretch; height: 26px; }
+  .statusline .mode { background: #8acb98; color: #14201a; font-weight: 600; padding: 0 0.8em; display: flex; align-items: center; }
+  .statusline.cmd .mode { background: #f2a66e; }
+  .statusline .file, .statusline .sect, .statusline .hint, .statusline .pct { display: flex; align-items: center; padding: 0 0.9em; white-space: nowrap; }
+  .statusline .file { background: #2a323d; }
+  .statusline .sect { flex: 1; overflow: hidden; text-overflow: ellipsis; color: #b8c0c9; min-width: 0; }
+  .statusline .sect > span { overflow: hidden; text-overflow: ellipsis; }
+  .statusline .hint { color: #94a0ab; }
+  .statusline .pct { background: #2a323d; }
+  .statusline input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--code-fg); font: inherit; padding: 0 0.6em; outline: none; }
+  .statusline .msg { flex: 1; display: flex; align-items: center; padding: 0 0.9em; color: #e3e6df; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .statusline .msg.err { color: #ff9a8f; }
+  @media (max-width: 48rem) { .statusline .hint { display: none; } }
+  @media (hover: none) and (pointer: coarse) { .statusline { display: none; } .page { padding-bottom: 3rem; } .vim-only { display: none; } }
+
+  @media print {
+    :root { --paper: #fff; --card: #f1f1ee; --ink: #000; --soft: #333; --rule: #bbb; --contour: #6b3a18; --blaze: #123f78; --moss: #1f4d28; --flare: #7d1c14; color-scheme: light; }
+    .statusline, .tools { display: none !important; }
+    .page { padding: 0; max-width: none; }
+    .col { margin: 0 auto; }
+    a { color: inherit; }
+    figure, .env, .state, pre { break-inside: avoid; }
+    details.lyrics > *:not(summary) { display: block; }
+    body { font-size: 11pt; }
+    .sidenote { float: none; width: auto; margin: 0.4rem 0 0.4rem 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+<div class="col">
+
+  <header class="running-head">
+    <p>Proceedings of the Campfire Conference on Emotional Logic (CCEL ’26), Session 3: Things We Learned the Hard Way</p>
+    <p>Preprint, v2 (v1 was written on Mt. Stupid)</p>
+  </header>
+
+  <div class="title-block">
+    <h1>If You Never Reach Mt. Stupid</h1>
+    <p class="subtitle">An emotional-logic proof that P ≠ NP for humans</p>
+    <p class="authors"><span data-author>A. Hiker</span><sup>1</sup> and The Chorus<sup>2</sup></p>
+    <p class="affil"><sup>1</sup>Department of Wrong Turns, University of the Trailhead<br><sup>2</sup>Forty people around a campfire, 2 a.m. (equal contribution, louder)</p>
+    <p class="status"><span class="accept">Accepted at CCEL ’26</span> (unanimous, sung). Not submitted to the Clay Mathematics Institute. Verification time: one scroll. Solve time: see Theorem&nbsp;1.</p>
+    <div class="tools">
+      <button class="btn" id="theme-btn" type="button">Switch to night hike</button>
+      <button class="btn" id="print-btn" type="button">Print or save as PDF</button>
+    </div>
+  </div>
+
+  <section class="abstract" aria-labelledby="abstract-h">
+    <h2 id="abstract-h">Abstract</h2>
+    <p>We resolve the P versus NP problem for the only computational substrate your manager cares about: people. Working in Emotional Logic, a proof system in which choruses are theorems, we show that the class of tasks a human can check quickly (summit photos, guitar solos, other people’s side projects) is strictly larger than the class of tasks a human can do quickly. The proof rests on four axioms drawn from a single primary source <a class="cite" href="#ref-1">[1]</a>, a folk-metal camping song, and introduces the Helicopter Exclusion Principle: a peak reached by opinion rather than on foot shows you nothing of the other side. We also show that the Rust compiler independently agrees with us, characterize tutorial hell as verification at 2× playback speed, and present a case study in which a verdict flips sign without losing any altitude. The result has no implications for computers and several for Tuesdays.</p>
+    <p class="keywords"><i>Keywords:</i> P vs NP, Dunning–Kruger (misapplied), helicopters, folk metal, ankles.</p>
+  </section>
+
+  <figure id="fig1">
+    <div class="fig-scroll">
+<svg class="fig1" viewBox="0 0 960 500" role="img" aria-labelledby="fig1-title fig1-desc" xmlns="http://www.w3.org/2000/svg">
+<title id="fig1-title">Mt. Stupid, with a helicopter</title>
+<desc id="fig1-desc">A hand-drawn curve of confidence against miles actually walked. It shoots up to a peak labelled Mt. Stupid, falls into the Valley of Despair, climbs the Slope of Enlightenment, and levels off at the Plateau of Sustainability. A helicopter carrying an armchair critic hovers over Mt. Stupid, having flown straight up from a car parked at the trailhead. A small hiker labelled "you, on foot" is climbing out of the valley.</desc>
+<path class="axis" d="M150.4,456.0 L150.8,442.7 L151.6,429.4 L151.2,416.1 L149.8,402.8 L149.2,389.4 L149.5,376.1 L149.5,362.8 L149.7,349.5 L150.3,336.2 L150.1,322.9 L149.1,309.6 L149.1,296.3 L150.0,283.0 L150.2,269.7 L149.9,256.3 L150.2,243.0 L150.7,229.7 L150.7,216.4 L151.0,203.1 L151.4,189.8 L150.6,176.5 L148.9,163.2 L148.3,149.9 L148.8,136.6 L149.0,123.2 L149.3,109.9 L150.0,96.6 L150.5,83.3 L150.4,70.0"/><path class="axis faint" d="M150.1,454.0 L150.5,440.8 L151.1,427.7 L151.9,414.5 L151.8,401.3 L151.1,388.1 L150.8,375.0 L151.1,361.8 L150.7,348.6 L150.0,335.5 L149.8,322.3 L149.7,309.1 L149.5,295.9 L149.9,282.8 L150.5,269.6 L150.2,256.4 L149.4,243.2 L149.2,230.1 L149.8,216.9 L150.0,203.7 L150.1,190.5 L150.4,177.4 L150.2,164.2 L149.6,151.0 L149.4,137.9 L149.6,124.7 L149.0,111.5 L148.0,98.4 L147.7,85.2 L148.1,72.0"/>
+<path class="axis" d="M144.0,449.0 L170.6,448.6 L197.2,449.1 L223.8,450.8 L250.3,451.7 L276.9,451.2 L303.5,450.8 L330.1,450.5 L356.7,449.9 L383.3,449.6 L409.9,450.1 L436.4,450.0 L463.0,449.2 L489.6,449.0 L516.2,449.9 L542.8,450.2 L569.4,449.8 L596.0,449.7 L622.6,449.7 L649.1,449.4 L675.7,449.9 L702.3,451.2 L728.9,451.7 L755.5,450.9 L782.1,450.2 L808.7,450.1 L835.2,449.6 L861.8,449.0 L888.4,449.0 L915.0,449.0"/><path class="axis faint" d="M146.0,451.0 L172.4,450.5 L198.9,450.8 L225.3,451.5 L251.8,451.3 L278.2,450.7 L304.7,450.6 L331.1,450.6 L357.6,450.5 L384.0,450.8 L410.5,451.1 L436.9,450.6 L463.4,449.4 L489.8,449.1 L516.3,449.4 L542.7,449.4 L569.2,449.3 L595.6,449.8 L622.1,450.1 L648.5,450.1 L675.0,450.5 L701.4,451.1 L727.9,450.5 L754.3,449.2 L780.8,448.6 L807.2,448.6 L833.7,448.4 L860.1,448.5 L886.6,449.0 L913.0,449.0"/>
+<path class="axis" d="M143,78 L150,66 L157,79"/><path class="axis" d="M903,443 L916,450 L903,457"/>
+<path class="trail" id="f1-curve" d="M150.5,449.8 L153.9,416.0 L157.2,385.2 L160.6,357.3 L164.0,331.9 L167.3,309.0 L170.7,288.4 L174.0,269.9 L177.3,253.3 L180.6,238.6 L183.9,225.6 L187.2,214.2 L190.6,204.2 L193.9,195.5 L197.2,188.2 L200.5,181.9 L203.9,176.8 L207.3,172.6 L210.7,169.4 L214.1,167.0 L217.6,165.5 L221.0,164.6 L224.3,164.4 L227.7,164.9 L231.0,165.8 L234.3,167.3 L237.5,169.2 L240.8,171.4 L244.1,174.0 L247.3,176.9 L250.6,180.1 L253.9,183.5 L257.3,187.1 L260.6,190.9 L264.0,194.8 L267.5,198.9 L270.9,203.1 L274.4,207.4 L277.9,211.8 L281.4,216.2 L285.0,220.7 L288.5,225.2 L292.0,229.8 L295.5,234.4 L299.0,239.0 L302.5,243.6 L306.0,248.2 L309.4,252.8 L312.8,257.4 L316.2,261.9 L319.6,266.4 L322.9,270.9 L326.2,275.4 L329.5,279.8 L332.8,284.1 L336.1,288.4 L339.4,292.6 L342.7,296.7 L346.0,300.7 L349.3,304.7 L352.6,308.5 L356.0,312.2 L359.4,315.8 L362.8,319.4 L366.2,322.8 L369.6,326.1 L373.0,329.2 L376.5,332.3 L379.9,335.3 L383.4,338.1 L386.8,340.9 L390.3,343.6 L393.7,346.1 L397.2,348.6 L400.6,351.0 L404.0,353.3 L407.4,355.6 L410.8,357.7 L414.2,359.8 L417.5,361.7 L420.9,363.6 L424.2,365.4 L427.6,367.1 L430.9,368.7 L434.3,370.3 L437.6,371.7 L441.0,373.0 L444.4,374.2 L447.7,375.3 L451.1,376.4 L454.4,377.3 L457.8,378.1 L461.1,378.8 L464.5,379.4 L467.8,380.0 L471.2,380.5 L474.5,380.9 L477.9,381.2 L481.2,381.5 L484.6,381.7 L487.9,381.8 L491.2,381.9 L494.6,382.0 L498.0,381.9 L501.4,381.8 L504.8,381.7 L508.2,381.5 L511.6,381.2 L515.1,380.8 L518.6,380.3 L522.0,379.7 L525.5,379.0 L529.0,378.2 L532.5,377.3 L536.0,376.2 L539.4,375.1 L542.9,373.8 L546.3,372.4 L549.8,370.9 L553.2,369.3 L556.6,367.5 L559.9,365.7 L563.3,363.8 L566.6,361.8 L570.0,359.8 L573.3,357.7 L576.6,355.5 L579.9,353.3 L583.2,351.0 L586.5,348.8 L589.9,346.5 L593.2,344.1 L596.5,341.8 L599.9,339.5 L603.3,337.1 L606.6,334.8 L610.0,332.4 L613.4,330.0 L616.8,327.6 L620.1,325.2 L623.5,322.8 L626.9,320.4 L630.2,318.0 L633.6,315.6 L636.9,313.2 L640.2,310.7 L643.5,308.3 L646.8,305.9 L650.1,303.6 L653.4,301.2 L656.7,298.9 L660.0,296.6 L663.4,294.3 L666.7,292.1 L670.0,289.9 L673.3,287.8 L676.7,285.8 L680.0,283.8 L683.4,281.8 L686.8,280.0 L690.1,278.2 L693.5,276.4 L696.9,274.7 L700.3,273.1 L703.7,271.5 L707.1,269.9 L710.5,268.4 L713.9,266.9 L717.3,265.5 L720.6,264.1 L724.0,262.7 L727.4,261.4 L730.7,260.0 L734.1,258.8 L737.5,257.5 L740.8,256.3 L744.2,255.1 L747.5,254.0 L750.9,252.9 L754.3,251.9 L757.7,251.0 L761.1,250.1 L764.5,249.3 L767.9,248.5 L771.3,247.9 L774.7,247.3 L778.2,246.8 L781.6,246.3 L785.0,245.9 L788.5,245.5 L791.9,245.2 L795.3,244.9 L798.8,244.7 L802.2,244.4 L805.6,244.2 L809.0,244.0 L812.4,243.8 L815.8,243.5 L819.2,243.3 L822.6,243.0 L826.0,242.7 L829.3,242.4 L832.7,242.0 L836.1,241.7 L839.4,241.3 L842.8,241.0 L846.2,240.6 L849.5,240.2 L852.9,239.9 L856.3,239.5 L859.6,239.2 L863.0,238.9 L866.4,238.6 L869.8,238.4 L873.1,238.1 L876.5,237.9 L879.9,237.7 L883.3,237.6 L886.6,237.4 L890.0,237.3"/>
+<path class="trail faint" d="M149.2,449.7 L152.7,415.9 L156.1,385.1 L159.5,357.1 L162.8,331.8 L166.2,308.8 L169.5,288.2 L172.8,269.7 L176.1,253.1 L179.4,238.3 L182.7,225.3 L186.0,213.8 L189.3,203.7 L192.6,195.0 L195.9,187.5 L199.3,181.2 L202.7,175.9 L206.2,171.6 L209.7,168.2 L213.3,165.7 L217.0,164.0 L220.7,163.1 L224.3,162.9 L227.9,163.4 L231.4,164.4 L234.9,166.0 L238.2,167.9 L241.6,170.3 L244.9,173.0 L248.1,176.0 L251.4,179.3 L254.7,182.8 L257.9,186.5 L261.2,190.4 L264.5,194.4 L267.8,198.7 L271.1,203.0 L274.4,207.4 L277.7,211.9 L281.1,216.5 L284.4,221.1 L287.7,225.8 L291.0,230.5 L294.3,235.2 L297.7,240.0 L301.0,244.7 L304.3,249.4 L307.6,254.1 L310.9,258.8 L314.2,263.4 L317.5,268.0 L320.9,272.5 L324.2,276.9 L327.6,281.3 L330.9,285.6 L334.3,289.8 L337.7,293.9 L341.2,297.9 L344.7,301.9 L348.1,305.7 L351.6,309.4 L355.2,313.0 L358.7,316.5 L362.2,319.9 L365.8,323.1 L369.3,326.3 L372.9,329.4 L376.4,332.4 L379.9,335.3 L383.4,338.1 L386.9,340.9 L390.3,343.6 L393.7,346.2 L397.1,348.7 L400.5,351.1 L403.9,353.5 L407.2,355.8 L410.5,358.1 L413.9,360.2 L417.2,362.3 L420.5,364.3 L423.8,366.2 L427.1,368.0 L430.5,369.7 L433.8,371.3 L437.2,372.8 L440.5,374.2 L443.9,375.5 L447.3,376.6 L450.7,377.6 L454.1,378.6 L457.5,379.4 L460.9,380.1 L464.3,380.7 L467.7,381.2 L471.0,381.6 L474.4,381.9 L477.8,382.1 L481.2,382.3 L484.5,382.3 L487.9,382.3 L491.3,382.3 L494.6,382.1 L498.0,381.9 L501.3,381.6 L504.7,381.2 L508.1,380.7 L511.5,380.2 L514.8,379.5 L518.2,378.8 L521.6,378.0 L525.0,377.1 L528.3,376.1 L531.7,375.0 L535.1,373.8 L538.4,372.5 L541.8,371.1 L545.2,369.7 L548.5,368.1 L551.9,366.5 L555.2,364.8 L558.6,363.1 L561.9,361.3 L565.3,359.4 L568.7,357.5 L572.0,355.6 L575.4,353.6 L578.8,351.6 L582.3,349.5 L585.7,347.4 L589.1,345.3 L592.5,343.2 L596.0,341.0 L599.4,338.8 L602.9,336.6 L606.3,334.3 L609.7,332.0 L613.2,329.7 L616.6,327.3 L619.9,325.0 L623.3,322.6 L626.7,320.1 L630.0,317.7 L633.3,315.3 L636.6,312.8 L640.0,310.4 L643.3,307.9 L646.5,305.5 L649.8,303.1 L653.1,300.7 L656.5,298.4 L659.8,296.1 L663.1,293.9 L666.5,291.8 L669.8,289.7 L673.2,287.7 L676.6,285.7 L680.1,283.9 L683.5,282.1 L687.0,280.3 L690.4,278.7 L693.9,277.1 L697.3,275.5 L700.8,274.1 L704.3,272.6 L707.7,271.3 L711.2,269.9 L714.6,268.6 L718.0,267.4 L721.4,266.1 L724.9,264.9 L728.2,263.7 L731.6,262.6 L735.0,261.4 L738.4,260.3 L741.8,259.2 L745.1,258.2 L748.5,257.2 L751.8,256.2 L755.2,255.3 L758.6,254.4 L761.9,253.5 L765.3,252.7 L768.7,251.9 L772.0,251.1 L775.4,250.4 L778.8,249.7 L782.1,249.0 L785.5,248.4 L788.9,247.8 L792.2,247.2 L795.6,246.6 L799.0,246.0 L802.3,245.4 L805.7,244.8 L809.0,244.2 L812.4,243.6 L815.7,243.0 L819.1,242.4 L822.4,241.9 L825.8,241.3 L829.2,240.7 L832.5,240.2 L835.9,239.7 L839.3,239.2 L842.6,238.8 L846.0,238.3 L849.4,238.0 L852.7,237.6 L856.1,237.3 L859.5,237.1 L862.9,236.8 L866.3,236.7 L869.7,236.5 L873.0,236.4 L876.4,236.3 L879.8,236.2 L883.2,236.1 L886.6,236.1 L890.0,236.0"/>
+<path class="flight" id="f1-flight" d="M40,401 C4,352 6,236 58,168 S150,98 178.2,88.0"/>
+
+<g class="doodle" id="f1-car">
+  <path d="M82,402 L82,352"/>
+  <g transform="rotate(-3 82 344)">
+    <rect x="36" y="330" width="92" height="27" rx="3" class="fill-paper"/>
+    <text x="82" y="349.5" class="hand small" text-anchor="middle" id="f1-t-trailhead">trailhead</text>
+  </g>
+  <path d="M26,442 L26,424 Q28,418 38,417 L51,404 Q54,401 61,401 L91,401 Q97,401 101,406 L110,417 Q120,418 122,424 L122,442 Z" class="fill-paper"/>
+  <path class="thin" d="M55,405 L66,405 L66,416 L48,416 Z M72,405 L93,405 L102,416 L72,416 Z"/>
+  <circle cx="47" cy="443" r="8.5" class="fill-paper"/><circle cx="101" cy="443" r="8.5" class="fill-paper"/>
+</g>
+<path class="axis-soft" d="M10.0,452.6 L19.8,451.8 L29.7,452.2 L39.5,452.5 L49.4,451.8 L59.2,452.1 L69.1,451.1 L78.9,451.8 L88.8,453.1 L98.6,452.2 L108.5,452.1 L118.3,451.4 L128.2,451.4 L138.0,452.6"/>
+
+<g class="doodle" id="f1-flag">
+  <path d="M224.2,164.3 L224.2,124.3"/>
+  <path d="M224.2,124.3 L251.2,131.3 L224.2,139.3 Z" class="fill-blaze"/>
+</g>
+
+<g class="doodle" id="f1-heli">
+  <path d="M250.2,61.0 L304.2,55.0 M251.2,71.0 L304.2,61.0"/>
+  <path d="M302.2,56.0 L312.2,42.0 L310.2,61.0"/>
+  <ellipse cx="224.2" cy="66.0" rx="31" ry="16.5" class="fill-paper"/>
+  <path d="M197.2,63.0 Q200.2,52.0 215.2,51.0 L215.2,63.0 Z"/>
+  <path d="M224.2,50.0 L224.2,40.0"/>
+  <path d="M166.2,38.5 L173.9,39.6 L181.6,39.7 L189.4,40.4 L197.1,39.4 L204.9,38.6 L212.6,39.4 L220.3,39.9 L228.0,40.3 L235.8,40.5 L243.5,40.7 L251.3,40.1 L259.0,41.2 L266.7,40.4 L274.5,40.1 L282.2,40.5"/>
+  <path class="thin" d="M160.2,33.0 q6,-5 14,-4 M276.2,35.0 q8,-3 14,1"/>
+  <path d="M209.2,80.0 L205.2,92.0 M238.2,80.0 L242.2,92.0"/>
+  <path d="M188.2,92.0 L256.2,92.0 M188.2,92.0 q-7,-1 -9,-7"/>
+</g>
+
+<g class="doodle" id="f1-hiker">
+  <path d="M513.0,379.8 L519.0,358.8 L527.0,376.9"/>
+  <path d="M519.0,358.8 L522.0,337.8"/>
+  <rect x="509.0" y="336.8" width="9" height="15" rx="2" transform="rotate(-8 514.0 344.8)" class="fill-paper"/>
+  <circle cx="523.5" cy="328.8" r="7.5" class="fill-paper"/>
+  <path d="M521.5,343.8 L534.0,351.8"/>
+  <path d="M533.0,345.8 L537.0,373.5"/>
+</g>
+
+<g class="labels">
+  <text x="260.2" y="140.3" class="hand big" id="f1-t-stupid">Mt. Stupid</text>
+  <text x="324.2" y="46.0" class="hand" id="f1-t-critic">armchair critic</text>
+  <text x="324.2" y="86.0" class="hand small soft" id="f1-t-arrived">(arrived by opinion)</text>
+  <text x="487.5" y="426.0" class="hand" text-anchor="middle" id="f1-t-valley">Valley of Despair</text>
+  <text x="639.5" y="288.9" class="hand" style="font-size:20px" text-anchor="middle" transform="rotate(-33.69 639.5 288.9)" id="f1-t-slope">Slope of Enlightenment</text>
+  <text x="905" y="196" class="hand" text-anchor="end" id="f1-t-plateau">Plateau of Sustainability</text>
+  <text x="498.0" y="308.8" class="hand small" text-anchor="end" id="f1-t-you">you, on foot</text>
+  <text x="74" y="480" class="hand small soft" text-anchor="middle" id="f1-t-parked">parked outside</text>
+  <text x="134" y="262" class="hand axis-label" text-anchor="middle" transform="rotate(-90 134 262)" id="f1-t-yaxis">confidence</text>
+  <text x="912" y="480" class="hand axis-label" text-anchor="end" id="f1-t-xaxis">miles actually walked</text>
+</g>
+</svg>
+    </div>
+    <figcaption><b>Figure 1.</b> Confidence as a function of miles actually walked, with the Helicopter Exclusion Principle (Lemma&nbsp;4.1) illustrated. Solid line: the trail. Dotted line: the flight path of opinion. The helicopter never enters the Valley of Despair, so it never sees the slope out of it.</figcaption>
+  </figure>
+
+<main class="body">
+
+  <h2 class="sec" id="s1"><span class="n">1</span>Introduction</h2>
+  <p>In 1971, Stephen Cook asked a question that has resisted every attempt since, including a standing one-million-dollar offer from the Clay Mathematics Institute <a class="cite" href="#ref-2">[2,&nbsp;5]</a>. If the answer to a problem can be checked quickly, can it also be found quickly? In the notation of the field: does P&nbsp;=&nbsp;NP?</p>
+  <p>We do not answer that question. We answer a more practical one.</p>
+  <p>Every day, millions of people assert the human version of P&nbsp;=&nbsp;NP out loud. They say it in art museums (<q>I could’ve done that</q>), in code review (<q>this is basically a weekend project</q>), and in sprint planning (<q>so that’s like two days, right?</q>). We call this the Armchair Conjecture. In this paper we disprove it using a proof system that, as far as we know, is the first in complexity theory designed to be sung.</p>
+  <p>Our contributions:</p>
+  <ul class="contrib">
+    <li>Working definitions of Human-P and Human-NP (§2).</li>
+    <li>Four axioms, all taken from one song (§3).</li>
+    <li>A proof that Human-P ≠ Human-NP, including the Helicopter Exclusion Principle and a lemma checked by <code>rustc</code> (§4).</li>
+    <li>A field case study showing that Mt. Stupid is measured in certainty, not positivity (§5).</li>
+    <li>Several corollaries you can bring to your next estimation meeting (§6).</li>
+  </ul>
+
+  <h2 class="sec" id="s2"><span class="n">2</span>Preliminaries</h2>
+  <div class="env def">
+    <p><span class="head">Definition 2.1</span> <span class="name">(Human-P).</span> A task is in Human-P if you can do it quickly.</p>
+  </div>
+  <div class="env def">
+    <p><span class="head">Definition 2.2</span> <span class="name">(Human-NP).</span> A task is in Human-NP if, when someone hands you the finished result, you can check it quickly. Canonical members: looking at a friend’s summit photo, hearing a guitar solo and knowing it rips, glancing at someone’s side project and saying <q>yep, that’s done.</q> Verification time: <span class="math">O</span>(1&nbsp;scroll).<span class="sn-ref" aria-hidden="true">1</span><span class="sidenote"><span class="sn-num">1</span> Doomscrolling is <span class="math">O</span>(<span class="math">n</span>) scrolls and verifies nothing.</span></p>
+  </div>
+  <div class="env rem">
+    <p><span class="head">Remark 2.3.</span> Human-P ⊆ Human-NP, as it does for computers: if you can climb it quickly, you can certainly recognize a photo of the top. All of the drama lives in the other direction.</p>
+  </div>
+  <div class="env def">
+    <p><span class="head">Definition 2.4</span> <span class="name">(Mt. Stupid).</span> A hill with a ridiculous name where your careful plans don’t count for a thing <a class="cite" href="#lyr-pc1">[1, Pre-Chorus]</a>. Formally, the first local maximum of confidence as a function of miles actually walked (Figure&nbsp;1).<span class="sn-ref" aria-hidden="true">2</span><span class="sidenote"><span class="sn-num">2</span> Figure&nbsp;1 is widely attributed to Kruger and Dunning <a href="#ref-3">[3]</a>. It does not appear in <a href="#ref-3">[3]</a>. It is a meme. We cite it anyway, with total confidence, and invite the reader to locate us on it.</span></p>
+  </div>
+  <div class="env conj">
+    <p><span class="head">Conjecture 2.5</span> <span class="name">(The Armchair Conjecture).</span> <span class="stmt">Human-NP ⊆ Human-P.</span> Informally: <q>if I can tell it’s good, I could do it.</q></p>
+  </div>
+
+  <h2 class="sec" id="s3"><span class="n">3</span>Axioms</h2>
+  <p>All axioms are drawn from the primary source <a class="cite" href="#ref-1">[1]</a>, reproduced in full in Appendix&nbsp;A. In Emotional Logic, a lyric is admissible as an axiom if it rhymes, or nearly rhymes, with something.</p>
+  <div class="env ax">
+    <p><span class="head">Axiom A1</span> <span class="name">(Trailhead Axiom).</span> A perfect map drawn at the trailhead contains no information about your legs: <span class="math">I</span>(map;&nbsp;legs)&nbsp;=&nbsp;0 <a class="cite" href="#ref-6">[6]</a>. Evidence: <q>the safest route keeps you parked outside</q> <a class="cite" href="#lyr-v1">[1, Verse&nbsp;1]</a>.</p>
+  </div>
+  <div class="env ax">
+    <p><span class="head">Axiom A2</span> <span class="name">(Empirical Necessity).</span> What you can do is measured only by trying. There is no oracle. Evidence: <q>How will you know what you can climb?</q> <a class="cite" href="#lyr-c1">[1, Chorus]</a>.</p>
+  </div>
+  <div class="env ax">
+    <p><span class="head">Axiom A3</span> <span class="name">(Conservation of Stumble).</span> Every failure is data, and data costs a sprained something. Evidence: <q>Every clumsy step leaves a mark you can read</q> <a class="cite" href="#lyr-v2">[1, Verse&nbsp;2]</a>.</p>
+  </div>
+  <div class="env ax">
+    <p><span class="head">Axiom A4</span> <span class="name">(Choral Lemma).</span> A line sung once is an opinion. Sung twice, it is a conjecture. Sung three times at campfire volume, it is a theorem. Precedent: <q>What I tell you three times is true</q> <a class="cite" href="#ref-4">[4]</a>.</p>
+  </div>
+  <div class="env rem">
+    <p><span class="head">Remark 3.1</span> <span class="name">(a careful reader objects).</span> The final chorus rewrites its opening lines, so A2 is sung only twice and holds conjecture status. However, the closing couplet, <q>The real summit waits beyond your doubt / You don’t get there by sitting it out,</q> appears unchanged in all three choruses <a class="cite" href="#lyr-c1">[1]</a>. By A4 it is a theorem. We call it the <i>Sitting-It-Out Theorem</i>, and it is the load-bearing wall of this paper.</p>
+  </div>
+
+  <h2 class="sec" id="s4"><span class="n">4</span>Main result</h2>
+  <div class="env thm">
+    <p><span class="head">Theorem 1</span> <span class="name">(Emotional P ≠ NP).</span> <span class="stmt">Human-P ⊊ Human-NP. Equivalently, the Armchair Conjecture is false. Equivalently, the effort is very much not the same.</span></p>
+  </div>
+  <p>We first establish three lemmas.</p>
+
+  <div class="env lemma thm" id="lemma-41">
+    <p><span class="head">Lemma 4.1</span> <span class="name">(Helicopter Exclusion Principle).</span> <span class="stmt">A peak reached by opinion rather than on foot shows you nothing of the other side.</span></p>
+  </div>
+  <div class="proof">
+    <p><span class="head">Proof.</span> A skeptic objects: people who say <q>I could do that</q> are standing on Mt. Stupid, so they must have climbed something. They did not. The armchair critic occupies Mt. Stupid permanently, but arrived by helicopter (Figure&nbsp;1, dotted line). Because the helicopter never lands, its passenger never descends into the Valley of Despair, and the Slope of Enlightenment is only visible from the valley floor. Having an opinion is not walking the trail. <span class="qed">∎</span></p>
+  </div>
+
+  <div class="env lemma thm">
+    <p><span class="head">Lemma 4.2</span> <span class="name">(Human Anti-Nondeterminism).</span> <span class="stmt">Humans possess a nondeterministic machine, but it guesses the wrong branch first, every time.</span></p>
+  </div>
+  <div class="proof">
+    <p><span class="head">Proof.</span> NP is defined using a nondeterministic machine that, in effect, guesses the right branch of the search tree every time. The human equivalent is documented in the primary source: <q>Take the wrong turn, lose your footing</q> <a class="cite" href="#lyr-c1">[1, Chorus]</a>. Since every first guess is wrong, a human has to actually walk the tree, wrong branches included. Solving therefore costs <span class="math">T</span><sub>solve</sub> = <span class="math">O</span>(2<sup><span class="math">w</span></sup>), where <span class="math">w</span> is the number of wrong turns, while verifying still costs <span class="math">T</span><sub>verify</sub> = <span class="math">O</span>(1&nbsp;scroll). <span class="qed">∎</span></p>
+  </div>
+
+  <div class="env lemma thm" id="lemma-43">
+    <p><span class="head">Lemma 4.3</span> <span class="name">(Borrow Checker Lemma).</span> <span class="stmt">Verifying borrows the evidence immutably. Solving requires a mutable borrow of the solver.</span></p>
+  </div>
+  <div class="proof">
+    <p><span class="head">Proof.</span> By compilation.</p>
+<pre aria-label="Rust source code"><span class="file">src/emotional_logic.rs</span><span class="c">/// O(1 scroll). Pure. Borrows the photo immutably.</span>
+<span class="k">fn</span> <span class="f">verify</span>(photo: &amp;<span class="ty">SummitPhoto</span>) -&gt; <span class="ty">bool</span> {
+    photo.<span class="f">looks_legit</span>()
+}
+
+<span class="c">/// O(2^wrong_turns). Needs a mutable borrow of *you*.</span>
+<span class="k">fn</span> <span class="f">solve</span>(you: <span class="m">&amp;mut</span> <span class="ty">Hiker</span>, trail: &amp;<span class="ty">Trail</span>) -&gt; <span class="ty">Summit</span> {
+    <span class="k">loop</span> {
+        <span class="k">match</span> you.<span class="f">step</span>(trail) {
+            <span class="ty">Step</span>::<span class="ty">Progress</span> =&gt; <span class="k">continue</span>,
+            <span class="ty">Step</span>::<span class="ty">Stumble</span>(lesson) =&gt; you.stride.<span class="f">absorb</span>(lesson), <span class="c">// side effect</span>
+            <span class="ty">Step</span>::<span class="ty">Summit</span>(s) =&gt; <span class="k">return</span> s,
+        }
+    }
+}
+
+<span class="c">/// The Armchair Conjecture, as code.</span>
+<span class="k">fn</span> <span class="f">armchair</span>(you: &amp;<span class="ty">Hiker</span>, trail: &amp;<span class="ty">Trail</span>) -&gt; <span class="ty">Summit</span> {
+    <span class="f">solve</span>(you, trail)
+}</pre>
+    <p><code>verify</code> and <code>solve</code> compile. The Armchair Conjecture does not <a class="cite" href="#ref-9">[9]</a>:</p>
+<pre aria-label="Compiler output"><span class="e">error[E0308]</span>: mismatched types
+  --&gt; src/emotional_logic.rs:19:11
+   |
+19 |     solve(you, trail)
+   |     ----- <span class="e">^^^ types differ in mutability</span>
+   |     |
+   |     arguments to this function are incorrect
+   |
+   = note: expected mutable reference `&amp;mut Hiker`
+                      found reference `&amp;Hiker`</pre>
+    <p>The side effect marked in <code>solve</code> is not incidental. The final chorus names it: <q>You’ve already changed your stride</q> <a class="cite" href="#lyr-fc">[1, Final Chorus]</a>. Verifying is a pure function. Climbing mutates the climber. <span class="qed">∎</span></p>
+  </div>
+
+  <div class="proof">
+    <p><span class="head">Proof of Theorem 1</span> (by contradiction, and mild dehydration).</p>
+    <ol class="steps">
+      <li>Assume the Armchair Conjecture: whatever you can verify quickly, you can do quickly.</li>
+      <li>You can verify a summit in one scroll by looking at a photo of it (Definition&nbsp;2.2).</li>
+      <li>Then you can reach the summit in one scroll, without leaving the parking lot.</li>
+      <li>Then you know what you can climb without climbing. This contradicts A2 and, more decisively, the Sitting-It-Out Theorem, which was sung three times and is therefore true by A4.</li>
+      <li>The only escape is that the parking-lot hiker is somehow already up there. By Lemma&nbsp;4.1 they are on Mt. Stupid by helicopter, which does not count. By Lemma&nbsp;4.2, if they started walking now, the cost would be exponential in wrong turns rather than one scroll. By Lemma&nbsp;4.3, the compiler will not let them try without a mutable borrow of themselves.</li>
+      <li>Contradiction. Therefore Human-P ≠ Human-NP, and since Human-P ⊆ Human-NP (Remark&nbsp;2.3), the inclusion is strict. <span class="qed">∎</span></li>
+    </ol>
+  </div>
+  <p class="qed-line">Q.E.D.<small>Quads Extremely Destroyed</small></p>
+
+  <h2 class="sec" id="s5"><span class="n">5</span>Case study: the gallery trajectory</h2>
+  <p>The following trajectory was reported to us by the first author <a class="cite" href="#ref-7">[7]</a>. We reproduce it without edits, because it is already a proof.</p>
+
+  <figure id="fig2">
+    <p class="legend">Bars show each verdict’s sign (left of centre: negative, right: positive) and its certainty (bar length). S3 is not a verdict. It is data.</p>
+    <ol class="states">
+      <li class="state">
+        <span class="sid">S0</span>
+        <p class="said"><q>I could’ve done that.</q></p>
+        <div class="meter" role="img" aria-label="Certainty: very high, positive"><span class="fill pos" style="left:50%;width:47.5%"></span></div>
+        <p class="note">Mt. Stupid (+). Arrived by helicopter.</p>
+      </li>
+      <li class="conn" aria-hidden="true"></li>
+      <li class="state">
+        <span class="sid">S1</span>
+        <p class="did">Makes simple, elementary art.</p>
+        <div class="meter" role="img" aria-label="Certainty: high, positive"><span class="fill pos" style="left:50%;width:35%"></span></div>
+        <p class="note">The helicopter lands. See Remark 5.1.</p>
+      </li>
+      <li class="conn" aria-hidden="true"></li>
+      <li class="state">
+        <span class="sid">S2</span>
+        <p class="said"><q>See?</q></p>
+        <div class="meter" role="img" aria-label="Certainty: very high, positive"><span class="fill pos" style="left:50%;width:45%"></span></div>
+        <p class="note">Still up there, but on foot now.</p>
+      </li>
+      <li class="conn" aria-hidden="true"></li>
+      <li class="state">
+        <span class="sid">S3</span>
+        <p class="did">Nobody buys it.</p>
+        <div class="meter" role="img" aria-label="Not a verdict: data"><span class="dot"></span></div>
+        <p class="note">Data, not a verdict. Identical in every trajectory.</p>
+      </li>
+      <li class="conn" aria-hidden="true"></li>
+      <li class="state">
+        <span class="sid">S4</span>
+        <p class="said"><q>Why is nobody buying this!?</q></p>
+        <div class="meter" role="img" aria-label="Certainty: medium, negative"><span class="fill neg" style="left:25%;width:25%"></span></div>
+        <p class="note">Descending. The valley has a lot of echo.</p>
+      </li>
+      <li class="conn" aria-hidden="true"></li>
+      <li class="state absorbing">
+        <span class="loop" aria-hidden="true">↺ most specimens stay here</span>
+        <span class="sid">S5</span>
+        <p class="said"><q>See!? This is why you are a FAILURE.</q></p>
+        <div class="meter" role="img" aria-label="Certainty: very high, negative"><span class="fill neg" style="left:2.5%;width:47.5%"></span></div>
+        <p class="note">Mt. Stupid (−). Same altitude as S0, facing the other way. Nearly absorbing.</p>
+      </li>
+      <li class="conn exit"><span>keeps making things; reads the data instead of ruling on it</span></li>
+      <li class="state escaped">
+        <span class="sid">S6</span>
+        <p class="said"><q>I’ve been selling these for a fair price for a while now.</q></p>
+        <div class="meter" role="img" aria-label="Certainty: modest, positive"><span class="fill pos" style="left:50%;width:15%"></span></div>
+        <p class="note">Not the top. A changed stride, and no bad take about it.</p>
+      </li>
+    </ol>
+    <figcaption><b>Figure 2.</b> The gallery trajectory as a state machine. S5 behaves as an absorbing state for most specimens. The one reported here escaped.</figcaption>
+  </figure>
+
+  <div class="env rem">
+    <p><span class="head">Remark 5.1</span> <span class="name">(The helicopter lands).</span> At S1 the subject actually makes something. This is the moment the helicopter touches down, and Lemma&nbsp;4.1 stops applying. Everything after S1 is real data, which is exactly why S3 hurts.</p>
+  </div>
+  <div class="env prop thm">
+    <p><span class="head">Proposition 5.2</span> <span class="name">(Sign Invariance of Mt. Stupid).</span> <span class="stmt">Mt. Stupid is measured in certainty, not positivity. Flipping the sign of a verdict does not change its altitude.</span></p>
+  </div>
+  <div class="proof">
+    <p><span class="head">Proof.</span> Compare S0 (<q>I could’ve done that</q>) with S5 (<q>See!? This is why you are a FAILURE</q>). Both are delivered with maximum certainty on a sample size of one. The sign flipped. The certainty didn’t. Both sit on the summit of Mt. Stupid, facing opposite directions. <span class="qed">∎</span></p>
+  </div>
+  <div class="env rem">
+    <p><span class="head">Observation 5.3</span> <span class="name">(The exit).</span> S3 is the same data in every trajectory. What decides whether S5 becomes permanent is whether the subject reads that data (A3) or rules on it. The specimen that escaped reached S6: <q>I’ve been selling these for a fair price for a while now.</q> Note what is missing. <q>Genius</q> is missing, and so is <q>failure.</q> It is not the highest peak, but the stride is big enough to know that, with no bad take about it. This is what calibration sounds like.</p>
+  </div>
+
+  <h2 class="sec" id="s6"><span class="n">6</span>Corollaries for productivity</h2>
+  <div class="env cor">
+    <p><span class="head">Corollary 6.1</span> <span class="name">(Tutorial Hell).</span> <span class="stmt">Watching someone build a thing is verification.</span> Watching it at 2× speed is verification at 2× speed. Neither is in Human-P, and Lemma&nbsp;4.1 applies in full: a tutorial is an excellent helicopter.</p>
+  </div>
+  <div class="env cor">
+    <p><span class="head">Corollary 6.2</span> <span class="name">(The Estimate).</span> <span class="stmt">“That’s like a two-day job” is a verification-time measurement reported as a solve-time estimate.</span> This is a units error, not a scheduling one.</p>
+  </div>
+  <div class="env cor">
+    <p><span class="head">Corollary 6.3</span> <span class="name">(The Demo).</span> <span class="stmt">A demo is a summit photo.</span> It proves the summit exists and says nothing about the trail.</p>
+  </div>
+  <div class="env cor">
+    <p><span class="head">Corollary 6.4</span> <span class="name">(The Kind One).</span> <span class="stmt">Being slow at something you can instantly recognize as good is not evidence that you are bad at it.</span> It is evidence that the task is in Human-NP, and that your taste arrived before your skill did, which is the normal order of arrival <a class="cite" href="#ref-8">[8]</a>. The gap between them is the trail.</p>
+  </div>
+
+  <h2 class="sec" id="s7"><span class="n">7</span>Limitations</h2>
+  <p>The proof is emotional, not mathematical. P versus NP remains open, the million dollars remains unclaimed, and we ask that nobody email the Clay Mathematics Institute about this. Figure&nbsp;1 is a meme (note&nbsp;2). The sample size is one song, and replication with other folk-metal camping songs is encouraged. The Choral Lemma has not been validated below campfire volume. Finally, see Reviewer&nbsp;2.</p>
+
+  <h2 class="sec" id="s8"><span class="n">8</span>Conclusion</h2>
+  <p>If you never reach Mt. Stupid, you never find out what you can climb. If you reach it by helicopter, you never find out either. The only admissible proof is on foot, and it changes the one who writes it. The effort is very much not the same.</p>
+  <p class="qed-line">∎<small>Quads Extremely Destroyed</small></p>
+
+  <h2 class="sec" id="reviews">Reviews</h2>
+  <div class="review">
+    <p><b>Reviewer 1.</b> <span class="verdict acc">Accept.</span></p>
+    <p>Rigor: questionable. Vibes: immaculate. The Borrow Checker Lemma alone is worth the price of admission, which was zero.</p>
+  </div>
+  <div class="review">
+    <p><b>Reviewer 2.</b> <span class="verdict rej">Reject.</span></p>
+    <p>I could have written this.</p>
+    <p class="editor">Editor’s note: Reviewer 2 has been located. See Figure&nbsp;1, helicopter.</p>
+  </div>
+  <div class="review">
+    <p><b>Reviewer 3</b> (forty people around a campfire, 2 a.m.). <span class="verdict acc">Accept.</span></p>
+    <p>Review was sung. Twice. Then a third time, which by Axiom&nbsp;A4 makes it binding.</p>
+  </div>
+
+  <h2 class="sec" id="ack">Acknowledgments</h2>
+  <p>We thank our ankles, without which Axiom&nbsp;A3 could not have been validated; Suno, for producing the primary source; and the Valley of Despair, for its hospitality. No helicopters were harmed in the making of this paper. Several egos were.</p>
+
+  <h2 class="sec" id="refs">References</h2>
+  <ol class="refs">
+    <li id="ref-1"><span>[1]</span><span><span data-author>A. Hiker</span>. <i>Mt. Stupid.</i> Song, generated with Suno, 2026. Full text in Appendix&nbsp;A.<span class="listen" hidden> <a data-song href="#">Listen</a>.</span></span></li>
+    <li id="ref-2"><span>[2]</span><span>S. A. Cook. The complexity of theorem-proving procedures. In <i>Proceedings of the Third Annual ACM Symposium on Theory of Computing</i>, pages 151–158, 1971.</span></li>
+    <li id="ref-3"><span>[3]</span><span>J. Kruger and D. Dunning. Unskilled and unaware of it: How difficulties in recognizing one’s own incompetence lead to inflated self-assessments. <i>Journal of Personality and Social Psychology</i>, 77(6):1121–1134, 1999. Does not contain Figure&nbsp;1.</span></li>
+    <li id="ref-4"><span>[4]</span><span>L. Carroll. <i>The Hunting of the Snark.</i> Macmillan, 1876.</span></li>
+    <li id="ref-5"><span>[5]</span><span>Clay Mathematics Institute. The Millennium Prize Problems, 2000.</span></li>
+    <li id="ref-6"><span>[6]</span><span>A. Korzybski. <i>Science and Sanity.</i> 1933. The map is not the territory.</span></li>
+    <li id="ref-7"><span>[7]</span><span><span data-author>A. Hiker</span>. The gallery trajectory. Personal communication, 2026.</span></li>
+    <li id="ref-8"><span>[8]</span><span>I. Glass. On the gap between taste and ability. Remarks in the video series <i>Ira Glass on Storytelling</i>, c. 2009.</span></li>
+    <li id="ref-9"><span>[9]</span><span>rustc 1.98.1. error[E0308]: mismatched types. Personal communication, most days.</span></li>
+  </ol>
+
+  <h2 class="sec" id="appx"><span class="n">A</span>Primary source</h2>
+  <a href="https://suno.com/song/39b0833a-3b4b-4d03-b530-47c9a3192c41">You probably can't sing it as good as Suno can. Just be honest about it and click here :P</a>
+  <details class="lyrics" id="lyrics">
+    <summary>Read the full lyrics of <i>Mt. Stupid</i> <a class="cite" href="#ref-1">[1]</a></summary>
+    <p class="listen" hidden><a data-song href="#">Listen to the primary source</a></p>
+    <div class="lyr">
+      <section id="lyr-v1"><h4>Verse 1</h4><p>You keep your boots clean at the trailhead sign<br>Draw a perfect map in a notebook line<br>But the path turns steep where the loose stones slide<br>And the safest route keeps you parked outside</p></section>
+      <section id="lyr-pc1"><h4>Pre-Chorus</h4><p>There’s a hill with a ridiculous name<br>Where your careful plans don’t count for a thing</p></section>
+      <section id="lyr-c1"><h4>Chorus</h4><p>If you never reach Mt. Stupid<br>How will you know what you can climb?<br>Take the wrong turn, lose your footing<br>Learn the shape of the ridgeline<br>The real summit waits beyond your doubt<br>You don’t get there by sitting it out</p></section>
+      <section id="lyr-v2"><h4>Verse 2</h4><p>You laugh at the slope, say it’s not worth the strain<br>Then the clouds roll in and erase the lane<br>Every clumsy step leaves a mark you can read<br>Every small failure teaches what you need</p></section>
+      <section id="lyr-pc2"><h4>Pre-Chorus</h4><p>Let the cold air tell you what you’re made of<br>Let the hard way show you where to go</p></section>
+      <section id="lyr-c2"><h4>Chorus</h4><p>If you never reach Mt. Stupid<br>How will you know what you can climb?<br>Take the wrong turn, lose your footing<br>Learn the shape of the ridgeline<br>The real summit waits beyond your doubt<br>You don’t get there by sitting it out</p></section>
+      <section id="lyr-br"><h4>Bridge</h4><p>Maybe the peak isn’t proof you were right<br>Maybe it’s the miles you dared to get wrong<br>So when the trail breaks, keep moving uphill<br>A foolish first step can make you strong</p></section>
+      <section id="lyr-fc"><h4>Final Chorus</h4><p>If you once reached Mt. Stupid<br>You’ve already changed your stride<br>Take what you learned from the stumble<br>Carry it up the other side<br>The real summit waits beyond your doubt<br>You don’t get there by sitting it out</p></section>
+      <section id="lyr-out"><h4>Outro</h4><p>One more step, one more try<br>The ridge is real, the sky is wide</p></section>
+    </div>
+  </details>
+
+  <h2 class="sec" id="cite">Cite this paper</h2>
+  <div class="bib">
+<pre id="bibtex">@inproceedings{hiker2026stupid,
+  title     = {If You Never Reach {Mt.~Stupid}: An Emotional-Logic
+               Proof that {P} $\neq$ {NP} for Humans},
+  author    = {<span data-author>A. Hiker</span> and {The Chorus}},
+  booktitle = {Proceedings of the Campfire Conference on
+               Emotional Logic (CCEL)},
+  year      = {2026},
+  note      = {Accepted unanimously, sung. Not submitted to
+               the Clay Mathematics Institute.}
+}</pre>
+    <button class="btn" id="copy-bib" type="button">Copy BibTeX</button>
+  </div>
+
+  <p class="colophon">Typeset in STIX Two Text and Kalam. Figures drawn by hand, by a function.<span class="vim-only"> Vim keys work here: press <kbd>:</kbd> and try <kbd>:help</kbd>.</span></p>
+
+</main>
+</div>
+</div>
+
+<div class="statusline" id="statusline" aria-live="polite">
+  <div class="row">
+    <span class="mode" id="sl-mode">NORMAL</span>
+    <span class="file">mt-stupid.html</span>
+    <span class="sect" id="sl-sect"><span>Title</span></span>
+    <span class="hint">j/k scroll  {/} section  gg/G  :help</span>
+    <span class="pct" id="sl-pct">Top</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var cfg = window.PAPER_CONFIG || {};
+  var root = document.documentElement;
+
+  /* ---- config: author + song link ---- */
+  if (cfg.AUTHOR) {
+    document.querySelectorAll("[data-author]").forEach(function (el) { el.textContent = cfg.AUTHOR; });
+  }
+  if (cfg.SONG_URL) {
+    document.querySelectorAll("[data-song]").forEach(function (a) { a.href = cfg.SONG_URL; a.target = "_blank"; a.rel = "noopener"; });
+    document.querySelectorAll(".listen").forEach(function (el) { el.hidden = false; });
+  }
+
+  /* ---- theme ---- */
+  var mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  var themeBtn = document.getElementById("theme-btn");
+  function effectiveTheme() {
+    var t = root.getAttribute("data-theme");
+    if (t === "light" || t === "dark") return t;
+    return mq && mq.matches ? "dark" : "light";
+  }
+  function paintThemeBtn() {
+    themeBtn.textContent = effectiveTheme() === "dark" ? "Switch to daylight" : "Switch to night hike";
+  }
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    try { localStorage.setItem("mt-stupid-theme", t); } catch (e) {}
+    paintThemeBtn();
+  }
+  themeBtn.addEventListener("click", function () { setTheme(effectiveTheme() === "dark" ? "light" : "dark"); });
+  if (mq && mq.addEventListener) mq.addEventListener("change", paintThemeBtn);
+  paintThemeBtn();
+
+  document.getElementById("print-btn").addEventListener("click", function () {
+    var d = document.getElementById("lyrics"); if (d) d.open = true;
+    window.print();
+  });
+
+  /* ---- copy bibtex ---- */
+  var copyBtn = document.getElementById("copy-bib");
+  copyBtn.addEventListener("click", function () {
+    var text = document.getElementById("bibtex").textContent;
+    function done(ok) {
+      copyBtn.textContent = ok ? "Copied" : "Select and copy manually";
+      setTimeout(function () { copyBtn.textContent = "Copy BibTeX"; }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } else {
+      try {
+        var ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta);
+        ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); done(ok);
+      } catch (e) { done(false); }
+    }
+  });
+
+  /* ---- lyric citations open the appendix ---- */
+  function openLyricsFor(hash) {
+    if (hash && hash.indexOf("#lyr-") === 0) { var d = document.getElementById("lyrics"); if (d) d.open = true; }
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#lyr-"]');
+    if (a) openLyricsFor(a.getAttribute("href"));
+  });
+  openLyricsFor(location.hash);
+
+  /* ---- statusline: section + percent ---- */
+  var sl = document.getElementById("statusline");
+  var slSect = document.getElementById("sl-sect");
+  var slPct = document.getElementById("sl-pct");
+  var slMode = document.getElementById("sl-mode");
+  var heads = Array.prototype.slice.call(document.querySelectorAll("h2.sec"));
+  function sectionName(h) {
+    var n = h.querySelector(".n");
+    var num = n ? n.textContent.trim() : "";
+    var rest = h.textContent.slice(n ? n.textContent.length : 0).replace(/\s+/g, " ").trim();
+    return num ? num + " " + rest : rest;
+  }
+  function updateStatus() {
+    if (sl.classList.contains("cmd") || sl.dataset.msg) return;
+    var cur = "Title";
+    for (var i = 0; i < heads.length; i++) { if (heads[i].getBoundingClientRect().top < 140) cur = sectionName(heads[i]); }
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var y = window.scrollY;
+    if (y >= max - 2) {
+      for (var k = 0; k < heads.length; k++) { if (heads[k].getBoundingClientRect().top < window.innerHeight - 60) cur = sectionName(heads[k]); }
+    }
+    if (y < 40) cur = "Title";
+    slSect.firstChild.textContent = cur;
+    slPct.textContent = y <= 2 ? "Top" : (y >= max - 2 ? "Bot" : Math.round(100 * y / max) + "%");
+  }
+  var ticking = false;
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; updateStatus(); }); }
+  }, { passive: true });
+  window.addEventListener("resize", updateStatus);
+  updateStatus();
+
+  /* ---- vim keys ---- */
+  var lastG = 0;
+  var msgTimer = null;
+  var rowHTML = sl.querySelector(".row").innerHTML;
+
+  function restoreRow() {
+    sl.classList.remove("cmd");
+    delete sl.dataset.msg;
+    sl.querySelector(".row").innerHTML = rowHTML;
+    slSect = document.getElementById("sl-sect"); slPct = document.getElementById("sl-pct"); slMode = document.getElementById("sl-mode");
+    updateStatus();
+  }
+  function showMsg(text, isErr) {
+    sl.classList.remove("cmd");
+    sl.dataset.msg = "1";
+    var row = sl.querySelector(".row");
+    row.innerHTML = '<span class="mode">NORMAL</span><span class="msg' + (isErr ? " err" : "") + '"></span>';
+    row.querySelector(".msg").textContent = text;
+    clearTimeout(msgTimer);
+    msgTimer = setTimeout(restoreRow, 5200);
+  }
+  function jumpSection(dir) {
+    var y = window.scrollY, target = null;
+    var tops = heads.map(function (h) { return h.getBoundingClientRect().top + y - 24; });
+    if (dir > 0) { for (var i = 0; i < tops.length; i++) { if (tops[i] > y + 4) { target = tops[i]; break; } } if (target === null) target = document.documentElement.scrollHeight; }
+    else { for (var j = tops.length - 1; j >= 0; j--) { if (tops[j] < y - 4) { target = tops[j]; break; } } if (target === null) target = 0; }
+    window.scrollTo({ top: target, behavior: "instant" });
+  }
+  function runCommand(raw) {
+    var cmd = raw.trim().replace(/^:+/, "");
+    if (cmd === "") { restoreRow(); return; }
+    var set = cmd.match(/^set?\s+(bg|background)=(dark|light)$/);
+    if (set) { setTheme(set[2]); showMsg("background=" + set[2]); return; }
+    switch (cmd) {
+      case "q": case "quit":
+        showMsg("E37: No write since last climb (add ! to override)", true); break;
+      case "q!": case "quit!": case "qa!":
+        showMsg("Quitting without climbing. The safest route keeps you parked outside. [1, Verse 1]"); break;
+      case "w":
+        showMsg('"mt-stupid.html" written, 1 stride changed'); break;
+      case "wq": case "x": case "wq!":
+        showMsg("Stride saved. You still can't quit a mountain."); break;
+      case "climb":
+        showMsg("You're on foot now. The helicopter has been returned to the rental agency."); break;
+      case "h": case "help":
+        showMsg("j/k scroll, { } jump sections, gg top, G bottom, :set bg=dark|light, :climb, :q"); break;
+      default:
+        showMsg("E492: Not an editor command: " + cmd, true);
+    }
+  }
+  function openCmd() {
+    clearTimeout(msgTimer);
+    sl.classList.add("cmd");
+    var row = sl.querySelector(".row");
+    row.innerHTML = '<span class="mode">COMMAND</span><input id="sl-input" aria-label="Vim command" autocomplete="off" spellcheck="false">';
+    var inp = row.querySelector("input");
+    inp.value = ":";
+    inp.focus();
+    inp.addEventListener("keydown", function (e) {
+      e.stopPropagation();
+      if (e.key === "Enter") { e.preventDefault(); runCommand(inp.value); }
+      else if (e.key === "Escape") { e.preventDefault(); restoreRow(); }
+      else if (e.key === "Backspace" && inp.value === ":") { e.preventDefault(); restoreRow(); }
+    });
+    inp.addEventListener("blur", function () { if (sl.classList.contains("cmd")) restoreRow(); });
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    switch (e.key) {
+      case "j": window.scrollBy({ top: 72, behavior: "instant" }); break;
+      case "k": window.scrollBy({ top: -72, behavior: "instant" }); break;
+      case "G": window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }); break;
+      case "g":
+        var now = Date.now();
+        if (now - lastG < 600) { window.scrollTo({ top: 0, behavior: "instant" }); lastG = 0; } else { lastG = now; }
+        break;
+      case "}": jumpSection(1); break;
+      case "{": jumpSection(-1); break;
+      case ":": e.preventDefault(); openCmd(); break;
+      case "Escape": if (sl.dataset.msg) restoreRow(); break;
+      default: return;
+    }
+  });
+})();
+</script>
+</body>
+</html>
